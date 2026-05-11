@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Italy 2026">
+<meta name="theme-color" content="#2d6a4f">
+<title>Italy 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; font-size: 15px; background: #f5f5f0; color: #1a1a1a; }
+
+#app { max-width: 680px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; background: #fff; }
+
+/* ── TOP HEADER ── */
+.top-bar {
+  background: #2d6a4f;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  position: sticky;
+  top: 0;
+  z-index: 60;
+}
+.top-bar-title { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.top-bar-dates { font-size: 13px; opacity: 0.75; }
+
+/* ── DAY PILL STRIP ── */
+.day-strip {
+  background: #fff;
+  border-bottom: 1px solid #e5e5e0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  display: flex;
+  position: sticky;
+  top: 45px;
+  z-index: 59;
+  padding: 0 4px;
+}
+.day-strip::-webkit-scrollbar { display: none; }
+.day-pill {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  min-width: 54px;
+  gap: 1px;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: inherit;
+  transition: background 0.1s;
+}
+.day-pill .wd { font-size: 11px; color: #888; font-weight: 500; }
+.day-pill .dt { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+.day-pill.active { border-bottom-color: #2d6a4f; }
+.day-pill.active .wd { color: #2d6a4f; }
+.day-pill.active .dt { color: #2d6a4f; }
+.day-pill:active { background: #f0f0ea; }
+
+/* ── CONTENT AREA ── */
+.content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+.day-view { display: none; padding: 20px 18px 0; }
+.day-view.active { display: block; }
+
+/* ── DAY HEADING ── */
+.day-heading { margin-bottom: 18px; }
+.day-heading h2 { font-size: 19px; font-weight: 600; color: #1a1a1a; }
+.day-heading .sub { font-size: 13px; color: #888; margin-top: 2px; }
+
+/* ── SECTION LABEL ── */
+.sec-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #888;
+  margin: 22px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sec-label::after { content: ''; flex: 1; height: 1px; background: #e5e5e0; }
+
+/* ── TIMELINE ROWS ── */
+.timeline { border: 1px solid #e5e5e0; border-radius: 10px; overflow: hidden; margin-bottom: 6px; }
+.trow {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  border-bottom: 1px solid #e5e5e0;
+  min-height: 48px;
+}
+.trow:last-child { border-bottom: none; }
+.trow-time {
+  padding: 12px 10px 12px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  line-height: 1.3;
+  border-right: 1px solid #e5e5e0;
+  background: #fafaf7;
+  display: flex;
+  align-items: flex-start;
+  white-space: pre-line;
+}
+.trow-body { padding: 12px 14px; }
+.trow-title { font-size: 14px; font-weight: 600; color: #1a1a1a; line-height: 1.3; }
+.trow-detail { font-size: 13px; color: #555; margin-top: 3px; line-height: 1.5; }
+.trow-sub { font-size: 12px; color: #888; margin-top: 3px; line-height: 1.4; }
+.trow-body a { color: #2d6a4f; text-decoration: none; font-size: 12px; }
+
+/* booked badge */
+.bkd { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 600; background: #e8f5ee; color: #2d6a4f; padding: 2px 8px; border-radius: 4px; margin-left: 5px; vertical-align: middle; }
+
+/* info badge */
+.inf { display: inline-block; font-size: 11px; font-weight: 500; background: #eef4ff; color: #3b6fd4; padding: 2px 8px; border-radius: 4px; margin-left: 5px; vertical-align: middle; }
+
+/* warn badge */
+.wrn { display: inline-block; font-size: 11px; font-weight: 500; background: #fff8e8; color: #a07020; padding: 2px 8px; border-radius: 4px; margin-left: 5px; vertical-align: middle; }
+
+/* note box */
+.note { background: #fff8e8; border-left: 3px solid #d4a820; padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 13px; color: #6b4f10; line-height: 1.5; margin-bottom: 12px; }
+
+/* ticket rows */
+.tkt { width: 100%; font-size: 13px; border-collapse: collapse; margin-top: 4px; }
+.tkt td { padding: 3px 0; color: #555; }
+.tkt td:first-child { color: #888; width: 54px; }
+.tkt td:last-child { text-align: right; color: #888; font-size: 12px; }
+
+/* ── NEARBY CARDS ── */
+.nearby-card {
+  border: 1px solid #e5e5e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.nearby-row {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 0;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5e5e0;
+  align-items: flex-start;
+}
+.nearby-row:last-child { border-bottom: none; }
+.nearby-ico { font-size: 16px; padding-top: 1px; }
+.nearby-body {}
+.nearby-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+.nearby-type { font-size: 11px; font-weight: 500; color: #888; margin-left: 6px; }
+.nearby-desc { font-size: 13px; color: #555; margin-top: 3px; line-height: 1.45; }
+
+/* ── BOTTOM TAB BAR ── */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 680px;
+  background: #fff;
+  border-top: 1px solid #e5e5e0;
+  display: flex;
+  z-index: 70;
+}
+.tab-btn {
+  flex: 1;
+  padding: 10px 4px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-family: inherit;
+}
+.tab-btn .ti { font-size: 22px; line-height: 1; }
+.tab-btn .tl { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #999; }
+.tab-btn.active .tl { color: #2d6a4f; }
+
+/* ── OTHER TAB PAGES ── */
+.page { display: none; padding: 18px 18px 0; }
+.page.active { display: block; }
+
+.list-section { margin-bottom: 24px; }
+.list-section h3 { font-size: 13px; font-weight: 600; color: #2d6a4f; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.08em; }
+.list-card { border: 1px solid #e5e5e0; border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.list-row { display: flex; align-items: flex-start; gap: 10px; padding: 11px 14px; border-bottom: 1px solid #e5e5e0; font-size: 13px; color: #444; line-height: 1.45; }
+.list-row:last-child { border-bottom: none; }
+.list-row .b { color: #2d6a4f; flex-shrink: 0; font-size: 12px; margin-top: 1px; }
+.list-row strong { color: #1a1a1a; font-weight: 600; display: block; }
+.list-row .s { font-size: 12px; color: #888; margin-top: 2px; }
+.hotel-stripe { height: 3px; }
+.hotel-stripe.rome { background: #c0543a; }
+.hotel-stripe.pos { background: #3a8fc0; }
+.hotel-stripe.flor { background: #c09a3a; }
+.hotel-body { padding: 14px; }
+.hotel-city { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #888; margin-bottom: 4px; }
+.hotel-name { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px; }
+.hotel-det { font-size: 13px; color: #666; line-height: 1.7; }
+.hotel-det a { color: #2d6a4f; }
+.frow { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid #e5e5e0; }
+.frow:last-child { border-bottom: none; }
+.fcode { font-size: 12px; font-weight: 600; color: #c09a3a; min-width: 64px; }
+.finfo { flex: 1; font-size: 13px; color: #444; }
+.ftime { font-size: 12px; color: #888; white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-bar-title">🇮🇹 Italy 2026</div>
+  <div class="top-bar-dates">May 21–31, 2026</div>
+</div>
+
+<!-- DAY PILL STRIP (only shown on schedule tab) -->
+<div class="day-strip" id="day-strip">
+  <button class="day-pill active" onclick="showDay('d22',this)" id="pill-d22"><span class="wd">Fri</span><span class="dt">May 22</span></button>
+  <button class="day-pill" onclick="showDay('d23',this)" id="pill-d23"><span class="wd">Sat</span><span class="dt">May 23</span></button>
+  <button class="day-pill" onclick="showDay('d24',this)" id="pill-d24"><span class="wd">Sun</span><span class="dt">May 24</span></button>
+  <button class="day-pill" onclick="showDay('d25',this)" id="pill-d25"><span class="wd">Mon</span><span class="dt">May 25</span></button>
+  <button class="day-pill" onclick="showDay('d26',this)" id="pill-d26"><span class="wd">Tue</span><span class="dt">May 26</span></button>
+  <button class="day-pill" onclick="showDay('d27',this)" id="pill-d27"><span class="wd">Wed</span><span class="dt">May 27</span></button>
+  <button class="day-pill" onclick="showDay('d28',this)" id="pill-d28"><span class="wd">Thu</span><span class="dt">May 28</span></button>
+  <button class="day-pill" onclick="showDay('d29',this)" id="pill-d29"><span class="wd">Fri</span><span class="dt">May 29</span></button>
+  <button class="day-pill" onclick="showDay('d30',this)" id="pill-d30"><span class="wd">Sat</span><span class="dt">May 30</span></button>
+  <button class="day-pill" onclick="showDay('d31',this)" id="pill-d31"><span class="wd">Sun</span><span class="dt">May 31</span></button>
+</div>
+
+<!-- ══════════ SCHEDULE CONTENT ══════════ -->
+<div class="content" id="schedule-content">
+
+  <!-- MAY 22 -->
+  <div class="day-view active" id="dv-d22">
+    <div class="day-heading"><h2>Friday, May 22</h2><div class="sub">Arrive in Rome · Isola Tiberina</div></div>
+
+    <div class="sec-label">Today's Plan</div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">12:35 PM</div>
+        <div class="trow-body">
+          <div class="trow-title">Land in Rome</div>
+          <div class="trow-detail">Uber from airport to hotel</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">2:00 PM</div>
+        <div class="trow-body">
+          <div class="trow-title">Check in — citizenM Isola Tiberina</div>
+          <div class="trow-detail">Lungotevere de' Cenci 5, Unit 8 · Breakfast included</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Afternoon</div>
+        <div class="trow-body">
+          <div class="trow-title">Pantheon <span class="bkd">✓ confirmed</span></div>
+          <div class="trow-detail">Free entry · go early to beat crowds</div>
+          <div class="trow-sub">Trevi Fountain + Spanish Steps — possible another day<br>Shopping: Via Condotti & Via Borgognona (near the Steps)</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Evening</div>
+        <div class="trow-body">
+          <div class="trow-title">Dinner — La Soffitta <span class="bkd">✓ booked</span></div>
+          <div class="trow-detail">Also on radar: Pandali · Mercato Hostaria</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-label">📍 Nearby Restaurants</div>
+    <div class="nearby-card">
+      <div class="nearby-row"><div class="nearby-ico">🍽</div><div class="nearby-body"><div class="nearby-name">Armando al Pantheon<span class="nearby-type">Roman trattoria</span></div><div class="nearby-desc">Classic Roman since 1961 — ricotta pie is unmissable. Reserve ahead, always full.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🍽</div><div class="nearby-body"><div class="nearby-name">Da Fortunato al Pantheon<span class="nearby-type">trattoria</span></div><div class="nearby-desc">Steps from the Pantheon, outdoor tables with a view. Carbonara & white truffle pasta.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🍦</div><div class="nearby-body"><div class="nearby-name">Frigidarium<span class="nearby-type">gelato</span></div><div class="nearby-desc">Near the Pantheon. Try the dark chocolate topping poured over your scoop.</div></div></div>
+    </div>
+
+    <div class="sec-label">🍷 Nearby Bars</div>
+    <div class="nearby-card">
+      <div class="nearby-row"><div class="nearby-ico">☕</div><div class="nearby-body"><div class="nearby-name">Sant'Eustachio il Caffè<span class="nearby-type">café</span></div><div class="nearby-desc">One of Rome's most famous cafes, around the corner from the Pantheon. Granita di caffè is the move.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🍷</div><div class="nearby-body"><div class="nearby-name">Minerve Rooftop Bar<span class="nearby-type">rooftop bar</span></div><div class="nearby-desc">Hotel Minerve rooftop — looks directly over the Pantheon. Perfect aperitivo spot.</div></div></div>
+    </div>
+  </div>
+
+  <!-- MAY 23 -->
+  <div class="day-view" id="dv-d23">
+    <div class="day-heading"><h2>Saturday, May 23</h2><div class="sub">Vatican Day · Prati neighborhood</div></div>
+    <div class="note">⚠️ Knees and shoulders must be covered for Vatican entry</div>
+
+    <div class="sec-label">Today's Plan</div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">7–10 AM</div>
+        <div class="trow-body">
+          <div class="trow-title">Breakfast at hotel</div>
+          <div class="trow-detail">citizenM · breakfast included</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">9:00 AM</div>
+        <div class="trow-body">
+          <div class="trow-title">Vatican Museums <span class="bkd">✓ booked</span></div>
+          <div class="trow-detail">Meet at Via Tunisi, 4 · Roma</div>
+          <div class="trow-sub">Tickets on Kati's phone (Viator) · Sistine Chapel + St. Peter's</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Midday</div>
+        <div class="trow-body">
+          <div class="trow-title">Lunch near Vatican</div>
+          <div class="trow-detail">See nearby picks below — Pizzarium is a must</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Afternoon</div>
+        <div class="trow-body">
+          <div class="trow-title">Mom's Rome list</div>
+          <div class="trow-detail">Gucci store · Grom GF gelato with cone</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Evening</div>
+        <div class="trow-body">
+          <div class="trow-title">Dinner — Trattoria Da Luigi <span class="bkd">✓ booked</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-label">📍 Nearby Restaurants</div>
+    <div class="nearby-card">
+      <div class="nearby-row"><div class="nearby-ico">🍕</div><div class="nearby-body"><div class="nearby-name">Pizzarium (Bonci)<span class="nearby-type">pizza al taglio · lunch</span></div><div class="nearby-desc">Best pizza by the slice in Rome, right below the Vatican walls. Order by weight. Always a line — always worth it.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🍽</div><div class="nearby-body"><div class="nearby-name">Il Sorpasso<span class="nearby-type">wine bar + restaurant</span></div><div class="nearby-desc">Hugely popular Prati spot. Great cheese & charcuterie, excellent pasta. Book ahead — always packed.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🍽</div><div class="nearby-body"><div class="nearby-name">La Zanzara<span class="nearby-type">all-day bistro</span></div><div class="nearby-desc">Open all day, breakfast through aperitivo. Gluten-free friendly. Steps from Piazza Risorgimento.</div></div></div>
+    </div>
+
+    <div class="sec-label">🍷 Nearby Bars</div>
+    <div class="nearby-card">
+      <div class="nearby-row"><div class="nearby-ico">☕</div><div class="nearby-body"><div class="nearby-name">Sciascia Caffè<span class="nearby-type">café · Prati</span></div><div class="nearby-desc">Roasts its own beans. Espresso served with a hint of melted dark chocolate. Elegant wood-paneled bar.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🍷</div><div class="nearby-body"><div class="nearby-name">Terrazza Les Étoiles<span class="nearby-type">rooftop bar</span></div><div class="nearby-desc">360° views over Castel Sant'Angelo & St. Peter's. Aperitivo with drink + snacks, 5:30–9 PM.</div></div></div>
+    </div>
+  </div>
+
+  <!-- MAY 24 -->
+  <div class="day-view" id="dv-d24">
+    <div class="day-heading"><h2>Sunday, May 24</h2><div class="sub">Ancient Rome · Colosseum · Monti neighborhood</div></div>
+    <div class="note">No food or drink allowed inside the Colosseum, Forum, or Palatine Hill — eat before or after!</div>
+
+    <div class="sec-label">Today's Plan</div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">9:30 AM</div>
+        <div class="trow-body">
+          <div class="trow-title">Colosseum + Forum + Palatine Hill <span class="bkd">✓ booked</span></div>
+          <div class="trow-detail">Meet at Santi Cosma e Damiano · Via dei Fori Imperiali, 1</div>
+          <div class="trow-sub">Allow 3–4 hours · no concessions inside</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Midday</div>
+        <div class="trow-body">
+          <div class="trow-title">Lunch in Monti</div>
+          <div class="trow-detail">See nearby picks below</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Afternoon</div>
+        <div class="trow-body">
+          <div class="trow-title">Trajan's Markets</div>
+          <div class="trow-detail">Historical ruins — not a functioning shopping mall!</div>
+          <div class="trow-sub">Dad's bike shops: Collalti · Biciclettaro</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Evening</div>
+        <div class="trow-body">
+          <div class="trow-title">Dinner — open</div>
+          <div class="trow-detail">See nearby picks below · last night in Rome</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-label">📍 Nearby Restaurants</div>
+    <div class="nearby-card">
+      <div class="nearby-row"><div class="nearby-ico">🍽</div><div class="nearby-body"><div class="nearby-name">Taverna Romana<span class="nearby-type">trattoria · Monti</span></div><div class="nearby-desc">Via della Madonna dei Monti, 79. Carbonara, cacio e pepe, oxtail. Casual, great value, no-nonsense Roman.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🍽</div><div class="nearby-body"><div class="nearby-name">Trattoria Luzzi<span class="nearby-type">trattoria</span></div><div class="nearby-desc">2 blocks behind the Colosseum. Roman classics + pizza. Gnocchi on Thursdays. Reserve ahead.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🍽</div><div class="nearby-body"><div class="nearby-name">La Taverna dei Fori Imperiali<span class="nearby-type">restaurant · Monti</span></div><div class="nearby-desc">Charming spot a short walk from the Forum. Outdoor seating. Book in advance.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🍦</div><div class="nearby-body"><div class="nearby-name">Fatamorgana<span class="nearby-type">gelato · Monti</span></div><div class="nearby-desc">One of Rome's best gelaterie. 50+ creative flavors. Gluten-free options available.</div></div></div>
+    </div>
+
+    <div class="sec-label">🍷 Nearby Bars</div>
+    <div class="nearby-card">
+      <div class="nearby-row"><div class="nearby-ico">🍷</div><div class="nearby-body"><div class="nearby-name">Oppio Caffè<span class="nearby-type">bar</span></div><div class="nearby-desc">Overlooks the Colosseum. Great for an aperitivo spritz after the tour.</div></div></div>
+    </div>
+  </div>
+
+  <!-- MAY 25 — TRAVEL -->
+  <div class="day-view" id="dv-d25">
+    <div class="day-heading"><h2>Monday, May 25</h2><div class="sub">Rome → Positano · Travel day</div></div>
+
+    <div class="sec-label">Today's Plan</div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">Morning</div>
+        <div class="trow-body">
+          <div class="trow-title">Check out — citizenM Rome</div>
+          <div class="trow-detail">Check-out by 11:00 AM</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">9:53 AM</div>
+        <div class="trow-body">
+          <div class="trow-title">Train 9605 departs</div>
+          <div class="trow-detail">Rental car: <strong>GVJSRXD2</strong></div>
+          <div class="trow-sub"><table class="tkt"><tr><td>Lizzie</td><td>2810524055</td><td>Seat 2/14B</td></tr><tr><td>Maggie</td><td>2810524056</td><td>Seat 2/14A</td></tr><tr><td>Mom</td><td>2810524057</td><td>Seat 2/13B</td></tr><tr><td>Dad</td><td>2810524058</td><td>Seat 2/13A</td></tr></table></div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">2:30 PM</div>
+        <div class="trow-body">
+          <div class="trow-title">Check in — Villa La Tartana</div>
+          <div class="trow-detail">Vicolo Vito Savino 4/6/8 · Positano · Breakfast until 10:30 AM</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Afternoon</div>
+        <div class="trow-body">
+          <div class="trow-title">Mom's mission — Valenti Positano</div>
+          <div class="trow-detail">Lemon garden & marmalade</div>
+          <div class="trow-sub">Viale Pasitea 12-14-16 · OR Sapori e Profumi, Via dei Mulini 6</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Evening</div>
+        <div class="trow-body">
+          <div class="trow-title">Dinner — open · explore Positano</div>
+          <div class="trow-detail">See Eats tab for ideas</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAY 26 -->
+  <div class="day-view" id="dv-d26">
+    <div class="day-heading"><h2>Tuesday, May 26</h2><div class="sub">Capri Boat Day · 8 hours on the water</div></div>
+
+    <div class="sec-label">Today's Plan</div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">9:30 AM</div>
+        <div class="trow-body">
+          <div class="trow-title">Boat check-in <span class="bkd">✓ booked</span></div>
+          <div class="trow-detail">In front of Covo dei Saraceni Hotel</div>
+          <div class="trow-sub">Guides: Federica & Tiziana · 8 hours on the water</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Midday</div>
+        <div class="trow-body">
+          <div class="trow-title">Free time in Capri</div>
+          <div class="trow-detail">Chairlift up + lunch in town · snack stops possible on the boat</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Evening</div>
+        <div class="trow-body">
+          <div class="trow-title">Dinner — open · back in Positano</div>
+          <div class="trow-detail">See nearby picks below</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-label">📍 Nearby Restaurants</div>
+    <div class="nearby-card">
+      <div class="nearby-row"><div class="nearby-ico">🍽</div><div class="nearby-body"><div class="nearby-name">Chez Black<span class="nearby-type">restaurant · on the beach</span></div><div class="nearby-desc">Iconic blue chairs on the beach, open since 1949. Great pizza & pasta. Ask for the secret heart-shaped pizza!</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🍽</div><div class="nearby-body"><div class="nearby-name">Rada Beach Restaurant<span class="nearby-type">seafood · beachfront</span></div><div class="nearby-desc">Right on Marina Grande beach. Fresh seafood & beautiful views. Reserve outdoor seating.</div></div></div>
+    </div>
+
+    <div class="sec-label">🍷 Nearby Bars</div>
+    <div class="nearby-card">
+      <div class="nearby-row"><div class="nearby-ico">🍷</div><div class="nearby-body"><div class="nearby-name">Franco's Bar — Le Sirenuse<span class="nearby-type">hotel bar</span></div><div class="nearby-desc">Legendary bar with epic views over Positano. Best sunset cocktails on the coast. Dress up a little.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🍷</div><div class="nearby-body"><div class="nearby-name">Aldo's Cocktail Bar — Le Sirenuse<span class="nearby-type">aperitivo</span></div><div class="nearby-desc">Signature Bellini with house-made peach purée. One of the best aperitivo views in Italy.</div></div></div>
+    </div>
+  </div>
+
+  <!-- MAY 27 -->
+  <div class="day-view" id="dv-d27">
+    <div class="day-heading"><h2>Wednesday, May 27</h2><div class="sub">Da Adolfo Beach Day · last evening in Positano</div></div>
+
+    <div class="sec-label">Today's Plan</div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">Morning</div>
+        <div class="trow-body">
+          <div class="trow-title">Church of Santa Maria Assunta</div>
+          <div class="trow-detail">Flavio Gioia's grave — Mom's must-see</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">10:00 AM</div>
+        <div class="trow-body">
+          <div class="trow-title">Boat to Da Adolfo departs</div>
+          <div class="trow-detail">From main Positano dock · look for the red fish sign "Da Adolfo"</div>
+          <div class="trow-sub">Runs 10 AM–1 PM · then stops · returns from 4 PM</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">1:00 PM</div>
+        <div class="trow-body">
+          <div class="trow-title">Lunch — Da Adolfo <span class="bkd">✓ booked</span></div>
+          <div class="trow-detail">Italian beach shack — lunch + lay on the beach · Tel: +39 089 875022</div>
+          <div class="trow-sub">Dad has email confirmation</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Evening</div>
+        <div class="trow-body">
+          <div class="trow-title">Dinner — open · last night in Positano</div>
+          <div class="trow-detail">See nearby picks below</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-label">📍 Nearby Restaurants</div>
+    <div class="nearby-card">
+      <div class="nearby-row"><div class="nearby-ico">🍽</div><div class="nearby-body"><div class="nearby-name">Saraceno d'Oro<span class="nearby-type">restaurant</span></div><div class="nearby-desc">Local favorite, not touristy. Homemade pasta. GF pasta available — call ahead to confirm.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🍽</div><div class="nearby-body"><div class="nearby-name">Ristorante Bruno<span class="nearby-type">restaurant</span></div><div class="nearby-desc">Terrace on the main road with an incredible Positano backdrop. No website — just call or walk in.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🧺</div><div class="nearby-body"><div class="nearby-name">Casa e Bottega<span class="nearby-type">café · healthy</span></div><div class="nearby-desc">Part café, part design store. Salads, grain bowls, smoothies, fresh juices. Also great for breakfast.</div></div></div>
+    </div>
+
+    <div class="sec-label">🍷 Nearby Bars</div>
+    <div class="nearby-card">
+      <div class="nearby-row"><div class="nearby-ico">🍷</div><div class="nearby-body"><div class="nearby-name">Il Tridente — Hotel Poseidon<span class="nearby-type">bar + restaurant</span></div><div class="nearby-desc">Best views in central Positano. Great cocktails and a full dinner menu. Reserve 14 days out online.</div></div></div>
+    </div>
+  </div>
+
+  <!-- MAY 28 — TRAVEL -->
+  <div class="day-view" id="dv-d28">
+    <div class="day-heading"><h2>Thursday, May 28</h2><div class="sub">Positano → Florence · Travel day</div></div>
+
+    <div class="sec-label">Today's Plan</div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">Morning</div>
+        <div class="trow-body">
+          <div class="trow-title">Check out — Villa La Tartana</div>
+          <div class="trow-detail">Breakfast until 10:30 AM</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">10:40 AM</div>
+        <div class="trow-body">
+          <div class="trow-title">Train 9532 departs</div>
+          <div class="trow-detail">Rental car: <strong>WDTTHJYR</strong></div>
+          <div class="trow-sub"><table class="tkt"><tr><td>Lizzie</td><td>2810528022</td><td>Seat 4/6A</td></tr><tr><td>Maggie</td><td>2810528023</td><td>Seat 4/6B</td></tr><tr><td>Mom</td><td>2810528024</td><td>Seat 4/5A</td></tr><tr><td>Dad</td><td>2810528025</td><td>Seat 4/5B</td></tr></table></div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Afternoon</div>
+        <div class="trow-body">
+          <div class="trow-title">Arrive Florence · half day to explore</div>
+          <div class="trow-detail">Anglo American Hotel Florence · Via Solferino 6</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Evening</div>
+        <div class="trow-body">
+          <div class="trow-title">Dinner — Osteria Santo Spirito <span class="bkd">✓ booked</span></div>
+          <div class="trow-detail">Reservation via Mom's WhatsApp</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAY 29 -->
+  <div class="day-view" id="dv-d29">
+    <div class="day-heading"><h2>Friday, May 29</h2><div class="sub">Cooking Class Day · Florence</div></div>
+
+    <div class="sec-label">Today's Plan</div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">Morning</div>
+        <div class="trow-body">
+          <div class="trow-title">Museums + wine windows</div>
+          <div class="trow-detail">1–2 museums first thing · Find the wine windows — Lizzie's mission!</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Midday</div>
+        <div class="trow-body">
+          <div class="trow-title">Lunch — open</div>
+          <div class="trow-detail">See nearby picks below · keep it light before class</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">3:00 PM</div>
+        <div class="trow-body">
+          <div class="trow-title">Cooking class <span class="bkd">✓ booked</span></div>
+          <div class="trow-detail">Taverna Dei Servi Firenze · Via dei Servi 52/rosso</div>
+          <div class="trow-sub">Ref: BR-1380094585 · Confirmation in Mom's email · runs until 6 PM</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Evening</div>
+        <div class="trow-body">
+          <div class="trow-title">Dinner — open · class ends 6 PM</div>
+          <div class="trow-detail">See nearby picks below</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-label">📍 Nearby Restaurants</div>
+    <div class="nearby-card">
+      <div class="nearby-row"><div class="nearby-ico">🥪</div><div class="nearby-body"><div class="nearby-name">SandwiChic<span class="nearby-type">sandwiches · Via S. Gallo 3r</span></div><div class="nearby-desc">2 min walk from Accademia. Rivals All'Antico Vinaio for best sandwich in Florence.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🍽</div><div class="nearby-body"><div class="nearby-name">Trattoria Zà Zà<span class="nearby-type">restaurant · near Mercato Centrale</span></div><div class="nearby-desc">Legendary grilled meats. Bistecca Fiorentina is the move. Very popular — arrive early.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🏪</div><div class="nearby-body"><div class="nearby-name">Mercato Centrale — upstairs food hall<span class="nearby-type">food hall</span></div><div class="nearby-desc">Multiple stalls, fresh everything. Great casual lunch spot between museums.</div></div></div>
+    </div>
+
+    <div class="sec-label">🍷 Nearby Bars</div>
+    <div class="nearby-card">
+      <div class="nearby-row"><div class="nearby-ico">☕</div><div class="nearby-body"><div class="nearby-name">Ditta Artigianale<span class="nearby-type">specialty coffee</span></div><div class="nearby-desc">Best third-wave coffee in Florence. Specialty espresso and cold brew.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🍷</div><div class="nearby-body"><div class="nearby-name">Il Santino<span class="nearby-type">wine bar</span></div><div class="nearby-desc">Curated Tuscan wines + charcuterie. Great post-class evening stop near the Arno.</div></div></div>
+    </div>
+  </div>
+
+  <!-- MAY 30 -->
+  <div class="day-view" id="dv-d30">
+    <div class="day-heading"><h2>Saturday, May 30</h2><div class="sub">David + Leather + Rooftop · last full day</div></div>
+
+    <div class="sec-label">Today's Plan</div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">8:50 AM</div>
+        <div class="trow-body">
+          <div class="trow-title">Galleria dell'Accademia — David <span class="bkd">✓ booked</span></div>
+          <div class="trow-detail">Via Ricasoli, 41 · Florence</div>
+          <div class="trow-sub">Tickets on Viator app on Kati's phone</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Midday</div>
+        <div class="trow-body">
+          <div class="trow-title">Lunch — open</div>
+          <div class="trow-detail">See nearby picks below</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">Afternoon</div>
+        <div class="trow-body">
+          <div class="trow-title">Leather shopping</div>
+          <div class="trow-detail">La Covella · Adams Leather — handmade bags with your initials</div>
+          <div class="trow-sub">Dad's bike shops: Scarpelli · Ciclo City</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">7:30 PM</div>
+        <div class="trow-body">
+          <div class="trow-title">Drinks — Cosimo Rooftop Restaurant <span class="bkd">✓ booked</span></div>
+          <div class="trow-detail">OpenTable reservation · 360° views over Florence</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">8:30 PM</div>
+        <div class="trow-body">
+          <div class="trow-title">Dinner — Trattoria La Casalinga <span class="bkd">✓ booked</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-label">📍 Nearby Restaurants</div>
+    <div class="nearby-card">
+      <div class="nearby-row"><div class="nearby-ico">🍽</div><div class="nearby-body"><div class="nearby-name">Ristorante Cafaggi<span class="nearby-type">restaurant · since 1922</span></div><div class="nearby-desc">Near Accademia. Famous for Fiorentina steak & pappardelle with wild boar. Old-school Florentine classic.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🥩</div><div class="nearby-body"><div class="nearby-name">Regina Bistecca<span class="nearby-type">steakhouse · near Duomo</span></div><div class="nearby-desc">Dedicated to bistecca alla Fiorentina. The T-bone you'll still be talking about when you get home.</div></div></div>
+      <div class="nearby-row"><div class="nearby-ico">🥪</div><div class="nearby-body"><div class="nearby-name">I Fratellini<span class="nearby-type">sandwiches · near Duomo</span></div><div class="nearby-desc">Legendary hole-in-the-wall. No seating. Line moves fast. Get the prosciutto & fig.</div></div></div>
+    </div>
+
+    <div class="sec-label">🍷 Nearby Bars</div>
+    <div class="nearby-card">
+      <div class="nearby-row"><div class="nearby-ico">☕</div><div class="nearby-body"><div class="nearby-name">Caffè Scudieri<span class="nearby-type">café · Piazza Duomo</span></div><div class="nearby-desc">Historic café across from the Duomo. Artisanal pastries + perfect cappuccino with a cathedral view.</div></div></div>
+    </div>
+  </div>
+
+  <!-- MAY 31 -->
+  <div class="day-view" id="dv-d31">
+    <div class="day-heading"><h2>Sunday, May 31</h2><div class="sub">Fly home · Florence → Amsterdam → Minneapolis</div></div>
+
+    <div class="sec-label">Today's Plan</div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">Morning</div>
+        <div class="trow-body">
+          <div class="trow-title">Check out — Anglo American Hotel</div>
+          <div class="trow-detail">Breakfast before heading to airport</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">11:20 AM</div>
+        <div class="trow-body">
+          <div class="trow-title">DL 9515 — Florence → Amsterdam</div>
+          <div class="trow-detail">Arrives Amsterdam 1:30 PM</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">2:40 PM</div>
+        <div class="trow-body">
+          <div class="trow-title">DL 165 — Amsterdam → Minneapolis</div>
+          <div class="trow-detail">Lands Minneapolis 4:42 PM local time</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">4:42 PM</div>
+        <div class="trow-body">
+          <div class="trow-title">🏠 Welcome home!</div>
+          <div class="trow-detail">Arrivederci Italia!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /schedule-content -->
+
+<!-- ══════════ OTHER TAB PAGES ══════════ -->
+
+<!-- EATS -->
+<div class="page" id="page-eats">
+  <div class="list-section"><h3>Rome — Booked</h3>
+    <div class="list-card">
+      <div class="list-row"><div class="b">✓</div><div><strong>La Soffitta</strong><div class="s">Fri May 22 · dinner <span class="bkd">✓ booked</span></div></div></div>
+      <div class="list-row"><div class="b">✓</div><div><strong>Trattoria Da Luigi</strong><div class="s">Sat May 23 · dinner <span class="bkd">✓ booked</span></div></div></div>
+    </div>
+  </div>
+  <div class="list-section"><h3>Rome — On the Radar</h3>
+    <div class="list-card">
+      <div class="list-row"><div class="b">○</div><div><strong>Pandali</strong></div></div>
+      <div class="list-row"><div class="b">○</div><div><strong>Mercato Hostaria</strong></div></div>
+      <div class="list-row"><div class="b">○</div><div><strong>Grom</strong><div class="s">GF gelato with cone — Mom's must</div></div></div>
+      <div class="list-row"><div class="b">📍</div><div><strong>Armando al Pantheon</strong><div class="s">Classic Roman · reserve ahead</div></div></div>
+      <div class="list-row"><div class="b">📍</div><div><strong>Pizzarium (Bonci)</strong><div class="s">Best pizza al taglio in Rome · near Vatican</div></div></div>
+      <div class="list-row"><div class="b">📍</div><div><strong>Il Sorpasso</strong><div class="s">Prati wine bar + great pasta</div></div></div>
+      <div class="list-row"><div class="b">📍</div><div><strong>Taverna Romana</strong><div class="s">Near Colosseum · cacio e pepe, oxtail</div></div></div>
+    </div>
+  </div>
+  <div class="list-section"><h3>Positano — Booked</h3>
+    <div class="list-card">
+      <div class="list-row"><div class="b">✓</div><div><strong>Da Adolfo</strong><div class="s">Wed May 27 · 1 PM lunch <span class="bkd">✓ booked</span></div></div></div>
+    </div>
+  </div>
+  <div class="list-section"><h3>Positano — On the Radar</h3>
+    <div class="list-card">
+      <div class="list-row"><div class="b">○</div><div><strong>CB Positano</strong></div></div>
+      <div class="list-row"><div class="b">📍</div><div><strong>Chez Black</strong><div class="s">On the beach · open since 1949</div></div></div>
+      <div class="list-row"><div class="b">📍</div><div><strong>Rada Beach Restaurant</strong><div class="s">Beachfront · fresh seafood</div></div></div>
+      <div class="list-row"><div class="b">📍</div><div><strong>Saraceno d'Oro</strong><div class="s">Local fave · GF pasta available</div></div></div>
+    </div>
+  </div>
+  <div class="list-section"><h3>Florence — Booked</h3>
+    <div class="list-card">
+      <div class="list-row"><div class="b">✓</div><div><strong>Osteria Santo Spirito</strong><div class="s">Thu May 28 · dinner <span class="bkd">✓ booked</span></div></div></div>
+      <div class="list-row"><div class="b">✓</div><div><strong>Cooking class lunch</strong><div class="s">Fri May 29 · 3–6 PM <span class="bkd">✓ booked</span></div></div></div>
+      <div class="list-row"><div class="b">✓</div><div><strong>Cosimo Rooftop</strong><div class="s">Sat May 30 · 7:30 PM drinks <span class="bkd">✓ booked</span></div></div></div>
+      <div class="list-row"><div class="b">✓</div><div><strong>Trattoria La Casalinga</strong><div class="s">Sat May 30 · 8:30 PM dinner <span class="bkd">✓ booked</span></div></div></div>
+    </div>
+  </div>
+  <div class="list-section"><h3>Florence — On the Radar</h3>
+    <div class="list-card">
+      <div class="list-row"><div class="b">○</div><div><strong>All'Antico Vinaio</strong></div></div>
+      <div class="list-row"><div class="b">○</div><div><strong>Pici Fra Diavolo</strong></div></div>
+      <div class="list-row"><div class="b">○</div><div><strong>Mama Eat</strong><div class="s">GF-friendly</div></div></div>
+      <div class="list-row"><div class="b">○</div><div><strong>Ciro & Sons</strong></div></div>
+      <div class="list-row"><div class="b">📍</div><div><strong>Ristorante Cafaggi</strong><div class="s">Since 1922 · Fiorentina steak + wild boar pasta</div></div></div>
+      <div class="list-row"><div class="b">📍</div><div><strong>Trattoria Zà Zà</strong><div class="s">Near Mercato Centrale · legendary grilled meats</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MUSTS -->
+<div class="page" id="page-musts">
+  <div class="list-section"><h3>Lizzie</h3>
+    <div class="list-card">
+      <div class="list-row"><div class="b">→</div><div>Cooking class in Florence <span class="bkd">✓ booked</span></div></div>
+      <div class="list-row"><div class="b">→</div><div>Boat adventure — Crapolla Charter (Gracie's rec)</div></div>
+      <div class="list-row"><div class="b">→</div><div>Find the wine windows in Florence</div></div>
+    </div>
+  </div>
+  <div class="list-section"><h3>Kati (Mom)</h3>
+    <div class="list-card">
+      <div class="list-row"><div class="b">→</div><div><strong>Rome:</strong> Gucci store</div></div>
+      <div class="list-row"><div class="b">→</div><div><strong>Rome:</strong> Grom — GF gelato with cone</div></div>
+      <div class="list-row"><div class="b">→</div><div><strong>Positano:</strong> Valenti lemon garden & marmalade<div class="s">Viale Pasitea 12-14-16 · OR Sapori e Profumi, Via dei Mulini 6</div></div></div>
+      <div class="list-row"><div class="b">→</div><div><strong>Positano:</strong> Church of Santa Maria Assunta — Flavio Gioia's grave</div></div>
+    </div>
+  </div>
+  <div class="list-section"><h3>Jim (Dad)</h3>
+    <div class="list-card">
+      <div class="list-row"><div class="b">→</div><div>Aperitivos — every city</div></div>
+      <div class="list-row"><div class="b">→</div><div>Wine windows — Florence</div></div>
+      <div class="list-row"><div class="b">→</div><div><strong>Rome bike shops:</strong> Collalti · Biciclettaro</div></div>
+      <div class="list-row"><div class="b">→</div><div><strong>Florence bike shops:</strong> Scarpelli · Ciclo City</div></div>
+    </div>
+  </div>
+  <div class="list-section"><h3>Shopping</h3>
+    <div class="list-card">
+      <div class="list-row"><div class="b">→</div><div><strong>Rome:</strong> Via Condotti & Via Borgognona</div></div>
+      <div class="list-row"><div class="b">→</div><div><strong>Florence:</strong> La Covella — handmade leather bags w/ initials</div></div>
+      <div class="list-row"><div class="b">→</div><div><strong>Florence:</strong> Adams Leather — handmade leather bags w/ initials</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- STAYS -->
+<div class="page" id="page-stays">
+  <div class="list-card" style="margin-bottom:12px"><div class="hotel-stripe rome"></div><div class="hotel-body"><div class="hotel-city">Rome · May 22–25 · 3 nights</div><div class="hotel-name">citizenM Rome Isola Tiberina</div><div class="hotel-det">Lungotevere de' Cenci 5, Unit 8 · 00186 Rome<br>+39 06 85871 180<br><br>Check-in 2:00 PM · Check-out 11:00 AM<br>Breakfast included</div></div></div>
+  <div class="list-card" style="margin-bottom:12px"><div class="hotel-stripe pos"></div><div class="hotel-body"><div class="hotel-city">Positano · May 25–28 · 3 nights</div><div class="hotel-name">Villa La Tartana</div><div class="hotel-det">Vicolo Vito Savino 4/6/8 · 84017 Positano SA<br><a href="http://www.villalatartana.it">villalatartana.it</a><br><br>Check-in 2:30 PM · Breakfast until 10:30 AM<br>Gracie's recommendation ⭐</div></div></div>
+  <div class="list-card" style="margin-bottom:12px"><div class="hotel-stripe flor"></div><div class="hotel-body"><div class="hotel-city">Florence · May 28–31 · 3 nights</div><div class="hotel-name">Anglo American Hotel Florence</div><div class="hotel-det">Curio Collection by Hilton<br>Via Solferino 6 · 50123 Florence</div></div></div>
+</div>
+
+<!-- INFO -->
+<div class="page" id="page-info">
+  <div class="list-section"><h3>Flights</h3>
+    <div class="list-card">
+      <div class="frow"><div class="fcode" style="color:#888;font-size:11px">Depart</div><div class="finfo">MSP — 8:05 PM</div><div class="ftime">Thu May 21</div></div>
+      <div class="frow"><div class="fcode" style="color:#888;font-size:11px">Arrive</div><div class="finfo">Land in Rome</div><div class="ftime">Fri May 22 · 12:35 PM</div></div>
+      <div class="frow"><div class="fcode">DL 9515</div><div class="finfo">Florence → Amsterdam</div><div class="ftime">May 31 · 11:20 AM</div></div>
+      <div class="frow"><div class="fcode">DL 165</div><div class="finfo">Amsterdam → Minneapolis</div><div class="ftime">May 31 · 2:40 PM</div></div>
+    </div>
+  </div>
+  <div class="list-section"><h3>Booked Tickets</h3>
+    <div class="list-card">
+      <div class="list-row"><div class="b">🎫</div><div><strong>Vatican Museums</strong><div class="s">Viator · Kati's phone · Sat May 23 · 9 AM · Via Tunisi 4</div></div></div>
+      <div class="list-row"><div class="b">🎫</div><div><strong>Colosseum + Forum + Palatine</strong><div class="s">Sun May 24 · 9:30 AM · Santi Cosma e Damiano</div></div></div>
+      <div class="list-row"><div class="b">🎫</div><div><strong>Capri Boat</strong><div class="s">Tue May 26 · 9:30 AM · Covo dei Saraceni</div></div></div>
+      <div class="list-row"><div class="b">🎫</div><div><strong>Da Adolfo Beach Lunch</strong><div class="s">Wed May 27 · 1 PM · Dad has email confirmation</div></div></div>
+      <div class="list-row"><div class="b">🎫</div><div><strong>Cooking Class</strong><div class="s">Fri May 29 · 3 PM · Ref: BR-1380094585 · Mom's email</div></div></div>
+      <div class="list-row"><div class="b">🎫</div><div><strong>Accademia (David)</strong><div class="s">Sat May 30 · 8:50 AM · Via Ricasoli 41 · Viator · Kati's phone</div></div></div>
+      <div class="list-row"><div class="b">🎫</div><div><strong>Cosimo Rooftop</strong><div class="s">Sat May 30 · 7:30 PM · OpenTable</div></div></div>
+    </div>
+  </div>
+  <div class="list-section"><h3>Rental Cars</h3>
+    <div class="list-card">
+      <div class="list-row"><div class="b">🚗</div><div><strong>Rome → Positano</strong><div class="s">Code: GVJSRXD2</div></div></div>
+      <div class="list-row"><div class="b">🚗</div><div><strong>Positano → Florence</strong><div class="s">Code: WDTTHJYR</div></div></div>
+    </div>
+  </div>
+  <div class="list-section"><h3>Good to Know</h3>
+    <div class="list-card">
+      <div class="list-row"><div class="b">⚠️</div><div>Vatican: knees and shoulders must be covered</div></div>
+      <div class="list-row"><div class="b">🚫</div><div>No food or drink inside the Colosseum, Forum, or Palatine Hill</div></div>
+      <div class="list-row"><div class="b">📱</div><div>Most tickets on Kati's phone (Viator app)</div></div>
+      <div class="list-row"><div class="b">📧</div><div>Cooking class & Osteria Santo Spirito confirmation in Mom's email</div></div>
+      <div class="list-row"><div class="b">📧</div><div>Da Adolfo confirmation in Dad's email</div></div>
+      <div class="list-row"><div class="b">🚤</div><div>Da Adolfo boat: look for the red fish sign · runs 10 AM–1 PM, returns from 4 PM</div></div>
+      <div class="list-row"><div class="b">💶</div><div>Tip €2–5/person · always check bill for service charge first</div></div>
+      <div class="list-row"><div class="b">☕</div><div>Coffee is cheaper standing at the bar — do it like a local!</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-btn active" id="tab-schedule" onclick="showTab('schedule',this)"><span class="ti">📅</span><span class="tl">Schedule</span></button>
+  <button class="tab-btn" id="tab-eats" onclick="showTab('eats',this)"><span class="ti">🍽</span><span class="tl">Eats</span></button>
+  <button class="tab-btn" id="tab-musts" onclick="showTab('musts',this)"><span class="ti">✅</span><span class="tl">Must-Dos</span></button>
+  <button class="tab-btn" id="tab-stays" onclick="showTab('stays',this)"><span class="ti">🏨</span><span class="tl">Stays</span></button>
+  <button class="tab-btn" id="tab-info" onclick="showTab('info',this)"><span class="ti">ℹ️</span><span class="tl">Info</span></button>
+</div>
+
+</div><!-- /app -->
+
+<script>
+var currentTab = 'schedule';
+var currentDay = 'd22';
+
+function showTab(name, btn) {
+  // hide all
+  document.getElementById('schedule-content').style.display = 'none';
+  document.getElementById('day-strip').style.display = 'none';
+  ['eats','musts','stays','info'].forEach(function(t){
+    document.getElementById('page-'+t).classList.remove('active');
+  });
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+
+  if (name === 'schedule') {
+    document.getElementById('schedule-content').style.display = 'block';
+    document.getElementById('day-strip').style.display = 'flex';
+  } else {
+    document.getElementById('page-'+name).classList.add('active');
+  }
+  btn.classList.add('active');
+  currentTab = name;
+  window.scrollTo(0, 0);
+}
+
+function showDay(id, btn) {
+  document.querySelectorAll('.day-view').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('.day-pill').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('dv-'+id).classList.add('active');
+  btn.classList.add('active');
+  currentDay = id;
+  // scroll pill into view
+  btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
