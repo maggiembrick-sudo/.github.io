@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brick Family Italy 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --terracotta: #C8563A;
+    --terracotta-light: #E8A090;
+    --cream: #F5F0E8;
+    --warm-white: #FDFAF4;
+    --olive: #7A8C5C;
+    --olive-dark: #4A5A34;
+    --charcoal: #2A2520;
+    --warm-gray: #8A8078;
+    --gold: #C4963A;
+    --gold-light: #E8D5A0;
+    --sky: #4A7FA0;
+    --sea: #2A6080;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--warm-white);
+    color: var(--charcoal);
+    font-weight: 300;
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--charcoal);
+    color: var(--cream);
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 60px,
+      rgba(196,150,58,0.04) 60px,
+      rgba(196,150,58,0.04) 61px
+    );
+  }
+  .hero-eyebrow {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--terracotta-light);
+  }
+  .hero-dates {
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    color: var(--warm-gray);
+    margin-top: 24px;
+  }
+  .hero-cities {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+  .city-pill {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 40px;
+    padding: 8px 22px;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .city-pill .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--cream);
+    border-bottom: 1px solid var(--gold-light);
+    padding: 0 40px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav a {
+    padding: 16px 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--warm-gray);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  nav a:hover { color: var(--terracotta); border-bottom-color: var(--terracotta); }
+
+  /* MAIN CONTENT */
+  main { max-width: 960px; margin: 0 auto; padding: 60px 24px 80px; }
+
+  /* SECTION HEADERS */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 40px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--gold-light);
+  }
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+  }
+  .section-header .city-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+  }
+
+  /* DAY CARDS */
+  .day-group { margin-bottom: 60px; }
+
+  .day-card {
+    border: 1px solid #E8E0D0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    background: white;
+  }
+  .day-header {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    align-items: stretch;
+    cursor: pointer;
+    user-select: none;
+  }
+  .day-num {
+    background: var(--terracotta);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 12px;
+    font-family: 'Playfair Display', serif;
+  }
+  .day-num .num { font-size: 2rem; line-height: 1; }
+  .day-num .mon { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.8; margin-top: 4px; }
+
+  .day-summary {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .day-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 400; }
+  .day-subtitle { font-size: 12px; color: var(--warm-gray); margin-top: 3px; }
+
+  .expand-icon {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid #E0D8C8;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    color: var(--warm-gray);
+    flex-shrink: 0;
+    transition: transform 0.25s;
+  }
+  .day-card.open .expand-icon { transform: rotate(180deg); }
+
+  .day-body {
+    display: none;
+    border-top: 1px solid #F0E8D8;
+    padding: 24px;
+  }
+  .day-card.open .day-body { display: block; }
+
+  /* DETAIL ROWS */
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 600px) { .detail-grid { grid-template-columns: 1fr; } }
+
+  .detail-block { margin-bottom: 20px; }
+  .detail-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--olive);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .detail-label::before {
+    content: '';
+    display: block;
+    width: 16px; height: 1px;
+    background: var(--olive);
+  }
+  .detail-content { font-size: 14px; line-height: 1.7; color: var(--charcoal); }
+  .detail-content a { color: var(--sky); text-decoration: none; }
+  .detail-content a:hover { text-decoration: underline; }
+
+  .tag {
+    display: inline-block;
+    background: var(--cream);
+    border: 1px solid var(--gold-light);
+    border-radius: 4px;
+    padding: 2px 10px;
+    font-size: 12px;
+    color: var(--warm-gray);
+    margin: 2px 2px 2px 0;
+  }
+  .tag.highlight { background: #FFF4EE; border-color: var(--terracotta-light); color: var(--terracotta); }
+  .tag.info { background: #EEF6FB; border-color: #A0C8E0; color: var(--sea); }
+
+  .note-box {
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    color: var(--warm-gray);
+    margin-top: 12px;
+    font-style: italic;
+  }
+
+  /* MUST-DO SECTION */
+  .musts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 32px;
+  }
+  .must-card {
+    background: white;
+    border: 1px solid #E8E0D0;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .must-card .who {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 12px;
+  }
+  .must-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--charcoal);
+  }
+  .must-item::before {
+    content: '→';
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* HOTELS */
+  .hotel-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 32px; }
+  .hotel-card {
+    background: white;
+    border: 1px solid #E8E0D0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .hotel-stripe {
+    height: 5px;
+  }
+  .hotel-stripe.rome { background: var(--terracotta); }
+  .hotel-stripe.positano { background: var(--sky); }
+  .hotel-stripe.florence { background: var(--olive); }
+  .hotel-card-body { padding: 20px; }
+  .hotel-city { font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-gray); margin-bottom: 6px; }
+  .hotel-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; margin-bottom: 8px; }
+  .hotel-detail { font-size: 13px; color: var(--warm-gray); line-height: 1.6; }
+
+  /* FOOD SECTION */
+  .food-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 32px; }
+  @media (max-width: 680px) { .food-cols { grid-template-columns: 1fr; } }
+  .food-col-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #F0E8D8;
+  }
+  .food-item { font-size: 13px; padding: 6px 0; border-bottom: 1px dotted #F0E8D8; color: var(--charcoal); }
+  .food-item:last-child { border-bottom: none; }
+
+  /* TIPS */
+  .tip-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+  .tip-chip {
+    background: white;
+    border: 1px solid #E8E0D0;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--charcoal);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    max-width: 280px;
+    line-height: 1.5;
+  }
+  .tip-chip .icon { font-size: 16px; flex-shrink: 0; }
+
+  footer {
+    text-align: center;
+    padding: 40px;
+    background: var(--charcoal);
+    color: var(--warm-gray);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+  }
+  footer span { color: var(--terracotta-light); }
+
+  section { margin-bottom: 80px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <p class="hero-eyebrow">Brick Family · May 2026</p>
+  <h1>La <em>Dolce</em> Vita</h1>
+  <p style="font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--warm-gray); font-style:italic; margin-top:8px;">Ten days in the heart of Italy</p>
+  <p class="hero-dates">May 21 – May 31, 2026 · Jim, Kati, Lizzie & Maggie</p>
+  <div class="hero-cities">
+    <div class="city-pill"><div class="dot"></div> Rome · 3 nights</div>
+    <div class="city-pill"><div class="dot"></div> Positano · 3 nights</div>
+    <div class="city-pill"><div class="dot"></div> Florence · 3 nights</div>
+  </div>
+</div>
+
+<nav>
+  <a href="#rome">Rome</a>
+  <a href="#travel-positano">→ Positano</a>
+  <a href="#positano">Positano</a>
+  <a href="#travel-florence">→ Florence</a>
+  <a href="#florence">Florence</a>
+  <a href="#mustsee">Must-Dos</a>
+  <a href="#food">Food & Drink</a>
+  <a href="#stays">Where We Stay</a>
+</nav>
+
+<main>
+
+  <!-- ROME -->
+  <section id="rome">
+    <div class="section-header">
+      <h2>Roma</h2>
+      <span class="city-label">May 22 – 24 · 3 nights</span>
+    </div>
+
+    <!-- Day 1 -->
+    <div class="day-group">
+      <div class="day-card" id="d22">
+        <div class="day-header" onclick="toggle('d22')">
+          <div class="day-num" style="background:var(--terracotta)">
+            <span class="num">22</span>
+            <span class="mon">Fri · May</span>
+          </div>
+          <div class="day-summary">
+            <div>
+              <div class="day-title">Arrive in Rome</div>
+              <div class="day-subtitle">Land 12:35 PM · settle in · first evening</div>
+            </div>
+            <div class="expand-icon">▾</div>
+          </div>
+        </div>
+        <div class="day-body">
+          <div class="detail-grid">
+            <div>
+              <div class="detail-block">
+                <div class="detail-label">Arrival</div>
+                <div class="detail-content">Flight lands 12:35 PM · Uber from airport to hotel</div>
+              </div>
+              <div class="detail-block">
+                <div class="detail-label">Afternoon</div>
+                <div class="detail-content">
+                  <span class="tag highlight">Pantheon</span> — confirmed for Friday<br>
+                  <span class="tag">Trevi Fountain</span> <span class="tag">Spanish Steps</span> — possible other day<br><br>
+                  Shopping: Via Condotti & Via Borgognona (streets near the Steps)
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="detail-block">
+                <div class="detail-label">Dinner</div>
+                <div class="detail-content"><strong>La Soffitta</strong></div>
+              </div>
+              <div class="detail-block">
+                <div class="detail-label">On the radar</div>
+                <div class="detail-content">
+                  <span class="tag">Pandali</span>
+                  <span class="tag">Mercato Hostaria</span>
+                </div>
+              </div>
+              <div class="detail-block">
+                <div class="detail-label">Sleep</div>
+                <div class="detail-content">citizenM Rome Isola Tiberina<br>Lungotevere de' Cenci 5, Unit 8</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 2 -->
+      <div class="day-card" id="d23">
+        <div class="day-header" onclick="toggle('d23')">
+          <div class="day-num" style="background:var(--terracotta)">
+            <span class="num">23</span>
+            <span class="mon">Sat · May</span>
+          </div>
+          <div class="day-summary">
+            <div>
+              <div class="day-title">Vatican Day</div>
+              <div class="day-subtitle">Vatican Museums · Sistine Chapel · St. Peter's</div>
+            </div>
+            <div class="expand-icon">▾</div>
+          </div>
+        </div>
+        <div class="day-body">
+          <div class="detail-grid">
+            <div>
+              <div class="detail-block">
+                <div class="detail-label">Meeting Point · 9:00 AM</div>
+                <div class="detail-content">Via Tunisi, 4 · Roma<br><span class="tag info">Tickets on Kati's phone · Viator</span></div>
+              </div>
+              <div class="detail-block">
+                <div class="detail-label">Important</div>
+                <div class="detail-content">
+                  <div class="note-box">Knees and shoulders must be covered for Vatican entry</div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="detail-block">
+                <div class="detail-label">Breakfast</div>
+                <div class="detail-content">Hotel · 7:00 – 10:00 AM</div>
+              </div>
+              <div class="detail-block">
+                <div class="detail-label">Dinner</div>
+                <div class="detail-content"><strong>Trattoria Da Luigi</strong></div>
+              </div>
+              <div class="detail-block">
+                <div class="detail-label">Sleep</div>
+                <div class="detail-content">citizenM Rome Isola Tiberina</div>
+              </div>
+            </div>
+          </div>
+          <div class="detail-block" style="margin-top:8px">
+            <div class="detail-label">Mom's Rome List</div>
+            <div class="detail-content">
+              <span class="tag highlight">Gucci store</span>
+              <span class="tag highlight">Grom — GF gelato with cone</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 3 -->
+      <div class="day-card" id="d24">
+        <div class="day-header" onclick="toggle('d24')">
+          <div class="day-num" style="background:var(--terracotta)">
+            <span class="num">24</span>
+            <span class="mon">Sun · May</span>
+          </div>
+          <div class="day-summary">
+            <div>
+              <div class="day-title">Ancient Rome</div>
+              <div class="day-subtitle">Colosseum · Roman Forum · Palatine Hill · Trajan's Markets</div>
+            </div>
+            <div class="expand-icon">▾</div>
+          </div>
+        </div>
+        <div class="day-body">
+          <div class="detail-grid">
+            <div>
+              <div class="detail-block">
+                <div class="detail-label">Meeting Point · 9:30 AM</div>
+                <div class="detail-content">Santi Cosma e Damiano<br>Via dei Fori Imperiali, 1 · Rome</div>
+              </div>
+              <div class="detail-block">
+                <div class="detail-label">Sights</div>
+                <div class="detail-content">
+                  <span class="tag highlight">Colosseum</span>
+                  <span class="tag highlight">Roman Forum</span>
+                  <span class="tag highlight">Palatine Hill</span>
+                  <span class="tag">Trajan's Markets</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="detail-block">
+                <div class="detail-label">Dad's Rome Bike Shops</div>
+                <div class="detail-content">
+                  <span class="tag">Collalti</span>
+                  <span class="tag">Biciclettaro</span>
+                </div>
+              </div>
+              <div class="detail-block">
+                <div class="detail-label">Sleep</div>
+                <div class="detail-content">citizenM Rome Isola Tiberina</div>
+              </div>
+            </div>
+          </div>
+          <div class="note-box">Trajan's Markets — historical ruins, not a functioning shopping center!</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRAVEL TO POSITANO -->
+  <section id="travel-positano">
+    <div class="section-header">
+      <h2>Rome → Positano</h2>
+      <span class="city-label">Monday · May 25</span>
+    </div>
+    <div class="day-card" id="d25t">
+      <div class="day-header" onclick="toggle('d25t')">
+        <div class="day-num" style="background:var(--charcoal)">
+          <span class="num">25</span>
+          <span class="mon">Mon · May</span>
+        </div>
+        <div class="day-summary">
+          <div>
+            <div class="day-title">Train to the Amalfi Coast</div>
+            <div class="day-subtitle">Train 9605 · 9:53 AM departure · Car GVJSRXD2</div>
+          </div>
+          <div class="expand-icon">▾</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="detail-grid">
+          <div>
+            <div class="detail-block">
+              <div class="detail-label">Train 9605 · 9:53 AM</div>
+              <div class="detail-content">
+                Lizzie: 2810524055 · Seat 2/14B<br>
+                Maggie: 2810524056 · Seat 2/14A<br>
+                Mom: 2810524057 · Seat 2/13B<br>
+                Dad: 2810524058 · Seat 2/13A
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="detail-block">
+              <div class="detail-label">Rental Car</div>
+              <div class="detail-content">Code: <strong>GVJSRXD2</strong></div>
+            </div>
+            <div class="detail-block">
+              <div class="detail-label">Hotel Check-in</div>
+              <div class="detail-content">Villa La Tartana · 2:30 PM<br>Vicolo Vito Savino 4/6/8, Positano</div>
+            </div>
+          </div>
+        </div>
+        <div class="detail-block" style="margin-top:8px">
+          <div class="detail-label">Mom's Positano Mission</div>
+          <div class="detail-content">
+            <span class="tag highlight">Valenti Positano</span> — lemon garden & marmalade<br>
+            Viale Pasitea 12-14-16, OR Sapori e Profumi di Positano, Via dei Mulini 6
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POSITANO -->
+  <section id="positano">
+    <div class="section-header">
+      <h2>Positano</h2>
+      <span class="city-label">May 25 – 27 · 3 nights</span>
+    </div>
+
+    <!-- Day 4 -->
+    <div class="day-card" id="d26">
+      <div class="day-header" onclick="toggle('d26')">
+        <div class="day-num" style="background:var(--sky)">
+          <span class="num">26</span>
+          <span class="mon">Tue · May</span>
+        </div>
+        <div class="day-summary">
+          <div>
+            <div class="day-title">Day at Sea — Capri Boat Day</div>
+            <div class="day-subtitle">8 hours · check in at Covo dei Saraceni hotel</div>
+          </div>
+          <div class="expand-icon">▾</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="detail-grid">
+          <div>
+            <div class="detail-block">
+              <div class="detail-label">Boat Check-in · 9:30 AM</div>
+              <div class="detail-content">In Front of Covo dei Saraceni Hotel<br>Guides: Federica & Tiziana<br><span class="tag info">8 hours on the water</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="detail-block">
+              <div class="detail-label">Free Time in Capri</div>
+              <div class="detail-content">Chairlift + lunch<br><span class="tag">Snack stops possible</span></div>
+            </div>
+            <div class="detail-block">
+              <div class="detail-label">Sleep</div>
+              <div class="detail-content">Villa La Tartana</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 5 -->
+    <div class="day-card" id="d27">
+      <div class="day-header" onclick="toggle('d27')">
+        <div class="day-num" style="background:var(--sky)">
+          <span class="num">27</span>
+          <span class="mon">Wed · May</span>
+        </div>
+        <div class="day-summary">
+          <div>
+            <div class="day-title">Da Adolfo Beach Day</div>
+            <div class="day-subtitle">Italian beach shack lunch · swim · 1 PM reservation</div>
+          </div>
+          <div class="expand-icon">▾</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="detail-grid">
+          <div>
+            <div class="detail-block">
+              <div class="detail-label">Da Adolfo · 1 PM Reservation</div>
+              <div class="detail-content">
+                Beach lunch + lounging<br>
+                Tel: +39 089 875022<br>
+                <span class="tag info">Dad has email confirmation</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="detail-block">
+              <div class="detail-label">Boat from Positano Dock</div>
+              <div class="detail-content">10:00 AM – 1:00 PM (then stops)<br>Returns 4:00 PM onward</div>
+            </div>
+            <div class="detail-block">
+              <div class="detail-label">Positano Must</div>
+              <div class="detail-content"><span class="tag highlight">Church of Santa Maria Assunta — Flavio Gioia's grave (Mom)</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRAVEL TO FLORENCE -->
+  <section id="travel-florence">
+    <div class="section-header">
+      <h2>Positano → Florence</h2>
+      <span class="city-label">Thursday · May 28</span>
+    </div>
+    <div class="day-card" id="d28t">
+      <div class="day-header" onclick="toggle('d28t')">
+        <div class="day-num" style="background:var(--charcoal)">
+          <span class="num">28</span>
+          <span class="mon">Thu · May</span>
+        </div>
+        <div class="day-summary">
+          <div>
+            <div class="day-title">North to Florence</div>
+            <div class="day-subtitle">Train 9532 · 10:40 AM · Car WDTTHJYR</div>
+          </div>
+          <div class="expand-icon">▾</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="detail-grid">
+          <div>
+            <div class="detail-block">
+              <div class="detail-label">Train 9532 · 10:40 AM</div>
+              <div class="detail-content">
+                Lizzie: 2810528022 · Seat 4/6A<br>
+                Maggie: 2810528023 · Seat 4/6B<br>
+                Mom: 2810528024 · Seat 4/5A<br>
+                Dad: 2810528025 · Seat 4/5B
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="detail-block">
+              <div class="detail-label">Rental Car</div>
+              <div class="detail-content">Code: <strong>WDTTHJYR</strong></div>
+            </div>
+            <div class="detail-block">
+              <div class="detail-label">Dinner</div>
+              <div class="detail-content"><strong>Osteria Santo Spirito</strong><br><span class="tag info">Reservation via Mom's WhatsApp</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="note-box">About a half day to wander and shop after arriving.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLORENCE -->
+  <section id="florence">
+    <div class="section-header">
+      <h2>Firenze</h2>
+      <span class="city-label">May 28 – 30 · 3 nights</span>
+    </div>
+
+    <!-- Day 6 -->
+    <div class="day-card" id="d29">
+      <div class="day-header" onclick="toggle('d29')">
+        <div class="day-num" style="background:var(--olive-dark)">
+          <span class="num">29</span>
+          <span class="mon">Fri · May</span>
+        </div>
+        <div class="day-summary">
+          <div>
+            <div class="day-title">Cooking Class Day</div>
+            <div class="day-subtitle">Museum morning · pasta & wine 3–6 PM</div>
+          </div>
+          <div class="expand-icon">▾</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="detail-grid">
+          <div>
+            <div class="detail-block">
+              <div class="detail-label">Morning</div>
+              <div class="detail-content">1–2 museums first thing<br><span class="tag">Find the wine windows! (Lizzie's mission)</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="detail-block">
+              <div class="detail-label">Cooking Class · 3:00–6:00 PM</div>
+              <div class="detail-content">
+                Taverna Dei Servi Firenze<br>
+                Via dei Servi 52/rosso · Florence<br>
+                Ref: <strong>BR-1380094585</strong><br>
+                <span class="tag info">Confirmation sent to Mom's email</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 7 -->
+    <div class="day-card" id="d30">
+      <div class="day-header" onclick="toggle('d30')">
+        <div class="day-num" style="background:var(--olive-dark)">
+          <span class="num">30</span>
+          <span class="mon">Sat · May</span>
+        </div>
+        <div class="day-summary">
+          <div>
+            <div class="day-title">David, Leather & Rooftop Drinks</div>
+            <div class="day-subtitle">Accademia 8:50 AM · shopping · Cosimo rooftop 7:30 PM</div>
+          </div>
+          <div class="expand-icon">▾</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="detail-grid">
+          <div>
+            <div class="detail-block">
+              <div class="detail-label">Accademia (David) · 8:50 AM</div>
+              <div class="detail-content">Via Ricasoli, 41 · Florence<br><span class="tag info">Tickets on Viator app · Kati's phone</span></div>
+            </div>
+            <div class="detail-block">
+              <div class="detail-label">Shopping</div>
+              <div class="detail-content">
+                Leather market options on the sheet<br>
+                <span class="tag highlight">La Covella — handmade leather bags w/ initials</span>
+                <span class="tag highlight">Adams Leather — handmade leather bags w/ initials</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="detail-block">
+              <div class="detail-label">Drinks · 7:30 PM</div>
+              <div class="detail-content"><strong>Cosimo Rooftop Restaurant</strong><br><span class="tag info">OpenTable reservation</span></div>
+            </div>
+            <div class="detail-block">
+              <div class="detail-label">Dinner · 8:30 PM</div>
+              <div class="detail-content"><strong>Trattoria La Casalinga</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="detail-block" style="margin-top:8px">
+          <div class="detail-label">Dad's Florence Bike Shops</div>
+          <div class="detail-content"><span class="tag">Scarpelli</span> <span class="tag">Ciclo City</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 8 -->
+    <div class="day-card" id="d31">
+      <div class="day-header" onclick="toggle('d31')">
+        <div class="day-num" style="background:var(--gold)" style="color:white">
+          <span class="num" style="color:white">31</span>
+          <span class="mon" style="color:rgba(255,255,255,0.8)">Sun · May</span>
+        </div>
+        <div class="day-summary">
+          <div>
+            <div class="day-title">Fly Home</div>
+            <div class="day-subtitle">Florence → Amsterdam → Minneapolis</div>
+          </div>
+          <div class="expand-icon">▾</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="detail-grid">
+          <div>
+            <div class="detail-block">
+              <div class="detail-label">Florence → Amsterdam</div>
+              <div class="detail-content">DL 9515 · 11:20 AM → 1:30 PM</div>
+            </div>
+          </div>
+          <div>
+            <div class="detail-block">
+              <div class="detail-label">Amsterdam → Minneapolis</div>
+              <div class="detail-content">DL 165 · 2:40 PM → 4:42 PM (local)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MUST-DOs -->
+  <section id="mustsee">
+    <div class="section-header">
+      <h2>Must-Dos by Person</h2>
+      <span class="city-label">The non-negotiables</span>
+    </div>
+    <div class="musts-grid">
+      <div class="must-card">
+        <div class="who">Lizzie</div>
+        <div class="must-item">Cooking class in Florence ✓ booked</div>
+        <div class="must-item">Boat adventure (Crapolla Charter — Gracie rec)</div>
+        <div class="must-item">Find the wine windows in Florence</div>
+      </div>
+      <div class="must-card">
+        <div class="who">Mom (Kati)</div>
+        <div class="must-item">Gucci store — Rome</div>
+        <div class="must-item">Grom GF gelato with cone — Rome</div>
+        <div class="must-item">Valenti Positano — lemon garden & marmalade</div>
+        <div class="must-item">Church of Santa Maria Assunta — Flavio Gioia's grave, Positano</div>
+      </div>
+      <div class="must-card">
+        <div class="who">Dad (Jim)</div>
+        <div class="must-item">Aperitivos — everywhere</div>
+        <div class="must-item">Wine windows — Florence</div>
+        <div class="must-item">Bike shops: Collalti + Biciclettaro (Rome)</div>
+        <div class="must-item">Bike shops: Scarpelli + Ciclo City (Florence)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOD -->
+  <section id="food">
+    <div class="section-header">
+      <h2>Food & Drink</h2>
+      <span class="city-label">Booked & on the radar</span>
+    </div>
+    <div class="food-cols">
+      <div>
+        <div class="food-col-title">Rome</div>
+        <div class="food-item">La Soffitta — Fri dinner ✓</div>
+        <div class="food-item">Trattoria Da Luigi — Sat dinner ✓</div>
+        <div class="food-item">Pandali</div>
+        <div class="food-item">Mercato Hostaria</div>
+        <div class="food-item">Grom — GF gelato</div>
+      </div>
+      <div>
+        <div class="food-col-title">Positano</div>
+        <div class="food-item">Da Adolfo beach — 1 PM res ✓</div>
+        <div class="food-item">CB Positano</div>
+        <div class="food-item">Covo dei Saraceni (boat stop)</div>
+      </div>
+      <div>
+        <div class="food-col-title">Florence</div>
+        <div class="food-item">Osteria Santo Spirito — Thu ✓</div>
+        <div class="food-item">Trattoria La Casalinga — Sat ✓</div>
+        <div class="food-item">Cosimo Rooftop — Sat 7:30 PM ✓</div>
+        <div class="food-item">All'Antico Vinaio</div>
+        <div class="food-item">Pici Fra Diavolo</div>
+        <div class="food-item">Mama Eat</div>
+        <div class="food-item">Ciro & Sons</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOTELS -->
+  <section id="stays">
+    <div class="section-header">
+      <h2>Where We Stay</h2>
+      <span class="city-label">All three cities</span>
+    </div>
+    <div class="hotel-cards">
+      <div class="hotel-card">
+        <div class="hotel-stripe rome"></div>
+        <div class="hotel-card-body">
+          <div class="hotel-city">Rome · May 22–25</div>
+          <div class="hotel-name">citizenM Rome Isola Tiberina</div>
+          <div class="hotel-detail">
+            Lungotevere de' Cenci 5, Unit 8<br>
+            00186 Rome<br>
+            +39 06 85871 180<br><br>
+            Check-in: 2:00 PM · Check-out: 11:00 AM<br>
+            Breakfast included
+          </div>
+        </div>
+      </div>
+      <div class="hotel-card">
+        <div class="hotel-stripe positano"></div>
+        <div class="hotel-card-body">
+          <div class="hotel-city">Positano · May 25–28</div>
+          <div class="hotel-name">Villa La Tartana</div>
+          <div class="hotel-detail">
+            Vicolo Vito Savino 4/6/8<br>
+            84017 Positano SA<br>
+            <a href="http://www.villalatartana.it" style="color:var(--sky)">villalatartana.it</a><br><br>
+            Check-in: 2:30 PM<br>
+            Breakfast until 10:30 AM<br>
+            <em style="font-size:12px;color:var(--warm-gray)">Gracie's recommendation!</em>
+          </div>
+        </div>
+      </div>
+      <div class="hotel-card">
+        <div class="hotel-stripe florence"></div>
+        <div class="hotel-card-body">
+          <div class="hotel-city">Florence · May 28–31</div>
+          <div class="hotel-name">Anglo American Hotel Florence</div>
+          <div class="hotel-detail">
+            Curio Collection by Hilton<br>
+            Via Solferino 6<br>
+            50123 Florence
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Brick Family Italy 2026 &nbsp;·&nbsp; <span>La Dolce Vita</span> &nbsp;·&nbsp; May 21 – 31</p>
+  <p style="margin-top:8px; font-size:11px">Have the most wonderful trip ✈</p>
+</footer>
+
+<script>
+function toggle(id) {
+  var card = document.getElementById(id);
+  card.classList.toggle('open');
+}
+</script>
+</body>
+</html>
