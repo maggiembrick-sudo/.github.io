@@ -227,7 +227,8 @@ html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; font-siz
 
 <!-- DAY PILL STRIP (only shown on schedule tab) -->
 <div class="day-strip" id="day-strip">
-  <button class="day-pill active" onclick="showDay('d22',this)" id="pill-d22"><span class="wd">Fri</span><span class="dt">May 22</span></button>
+  <button class="day-pill active" onclick="showDay('d21',this)" id="pill-d21"><span class="wd">Thu</span><span class="dt">May 21</span></button>
+  <button class="day-pill" onclick="showDay('d22',this)" id="pill-d22"><span class="wd">Fri</span><span class="dt">May 22</span></button>
   <button class="day-pill" onclick="showDay('d23',this)" id="pill-d23"><span class="wd">Sat</span><span class="dt">May 23</span></button>
   <button class="day-pill" onclick="showDay('d24',this)" id="pill-d24"><span class="wd">Sun</span><span class="dt">May 24</span></button>
   <button class="day-pill" onclick="showDay('d25',this)" id="pill-d25"><span class="wd">Mon</span><span class="dt">May 25</span></button>
@@ -242,8 +243,32 @@ html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; font-siz
 <!-- ══════════ SCHEDULE CONTENT ══════════ -->
 <div class="content" id="schedule-content">
 
+  <!-- MAY 21 — FLY OUT -->
+  <div class="day-view active" id="dv-d21">
+    <div class="day-heading"><h2>Thursday, May 21</h2><div class="sub">Fly out of Minneapolis · overnight to Rome</div></div>
+
+    <div class="sec-label">Today's Plan</div>
+    <div class="timeline">
+      <div class="trow">
+        <div class="trow-time">Evening</div>
+        <div class="trow-body">
+          <div class="trow-title">Head to MSP Airport</div>
+          <div class="trow-detail">Allow extra time — international departure</div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="trow-time">8:05 PM CDT</div>
+        <div class="trow-body">
+          <div class="trow-title">DL 298 — Minneapolis → Rome (FCO)</div>
+          <div class="trow-detail">Minneapolis–Saint Paul International (MSP) → Rome Fiumicino (FCO)</div>
+          <div class="trow-sub">Overnight flight · arrives Friday May 22 at 12:35 PM GMT</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MAY 22 -->
-  <div class="day-view active" id="dv-d22">
+  <div class="day-view" id="dv-d22">
     <div class="day-heading"><h2>Friday, May 22</h2><div class="sub">Arrive in Rome · Isola Tiberina</div></div>
 
     <div class="sec-label">Today's Plan</div>
@@ -274,7 +299,8 @@ html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; font-siz
         <div class="trow-time">Evening</div>
         <div class="trow-body">
           <div class="trow-title">Dinner — La Soffitta <span class="bkd">✓ booked</span></div>
-          <div class="trow-detail">Also on radar: Pandali · Mercato Hostaria</div>
+          <div class="trow-detail">Piazza del Risorgimento, 46/A · 00192 Rome</div>
+          <div class="trow-sub"><a href="https://lasoffittarenovatio.com" target="_blank">lasoffittarenovatio.com</a> · Also on radar: Pandali · Mercato Hostaria</div>
         </div>
       </div>
     </div>
@@ -333,6 +359,8 @@ html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; font-siz
         <div class="trow-time">Evening</div>
         <div class="trow-body">
           <div class="trow-title">Dinner — Trattoria Da Luigi <span class="bkd">✓ booked</span></div>
+          <div class="trow-detail">Piazza Sforza Cesarini, 23/24 · 00186 Rome</div>
+          <div class="trow-sub"><a href="https://trattoriadaluigi.com" target="_blank">trattoriadaluigi.com</a></div>
         </div>
       </div>
     </div>
@@ -576,7 +604,8 @@ html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; font-siz
         <div class="trow-time">Evening</div>
         <div class="trow-body">
           <div class="trow-title">Dinner — Osteria Santo Spirito <span class="bkd">✓ booked</span></div>
-          <div class="trow-detail">Reservation via Mom's WhatsApp</div>
+          <div class="trow-detail">Piazza Santo Spirito, 16/R · 50125 Florence</div>
+          <div class="trow-sub"><a href="https://osteriasantospirito.it" target="_blank">osteriasantospirito.it</a> · Reservation via Mom's WhatsApp</div>
         </div>
       </div>
     </div>
@@ -673,6 +702,8 @@ html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; font-siz
         <div class="trow-time">8:30 PM</div>
         <div class="trow-body">
           <div class="trow-title">Dinner — Trattoria La Casalinga <span class="bkd">✓ booked</span></div>
+          <div class="trow-detail">Via dei Michelozzi, 9/R · 50125 Florence</div>
+          <div class="trow-sub"><a href="https://trattorialacasalinga.it" target="_blank">trattorialacasalinga.it</a></div>
         </div>
       </div>
     </div>
@@ -828,8 +859,8 @@ html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; font-siz
 <div class="page" id="page-info">
   <div class="list-section"><h3>Flights</h3>
     <div class="list-card">
-      <div class="frow"><div class="fcode" style="color:#888;font-size:11px">Depart</div><div class="finfo">MSP — 8:05 PM</div><div class="ftime">Thu May 21</div></div>
-      <div class="frow"><div class="fcode" style="color:#888;font-size:11px">Arrive</div><div class="finfo">Land in Rome</div><div class="ftime">Fri May 22 · 12:35 PM</div></div>
+      <div class="frow"><div class="fcode">DL 298</div><div class="finfo">Minneapolis (MSP) → Rome FCO</div><div class="ftime">May 21 · 8:05 PM CDT</div></div>
+      <div class="frow"><div class="fcode" style="color:#888;font-size:11px">Arrive</div><div class="finfo">Land in Rome (FCO)</div><div class="ftime">Fri May 22 · 12:35 PM GMT</div></div>
       <div class="frow"><div class="fcode">DL 9515</div><div class="finfo">Florence → Amsterdam</div><div class="ftime">May 31 · 11:20 AM</div></div>
       <div class="frow"><div class="fcode">DL 165</div><div class="finfo">Amsterdam → Minneapolis</div><div class="ftime">May 31 · 2:40 PM</div></div>
     </div>
@@ -878,7 +909,7 @@ html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; font-siz
 
 <script>
 var currentTab = 'schedule';
-var currentDay = 'd22';
+var currentDay = 'd21';
 
 function showTab(name, btn) {
   // hide all
